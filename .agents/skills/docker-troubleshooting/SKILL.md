@@ -1,3 +1,8 @@
+---
+name: docker-troubleshooting
+description: Diagnose Docker container and application connectivity problems using a structured evidence-first workflow.
+---
+
 # Docker Troubleshooting
 
 ## Purpose
@@ -32,3 +37,10 @@ Before diagnosing the problem, collect relevant evidence such as:
 - Relevant Git changes when configuration may have changed
 
 Do not assume the cause from a single symptom.
+
+## Lessons Learned
+
+- Always compare the host port mapping with the port the application actually listens on inside the container.
+- Do not treat `EXPOSE` as proof that a host port is published.
+- Confirm suspected port mismatches from inside the running container when possible.
+- Prefer fixing runtime configuration when the code and image configuration are already correct.
