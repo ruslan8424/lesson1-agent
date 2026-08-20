@@ -15,6 +15,13 @@ app.get("/version", (req, res) => {
     res.json({ version: "1.0.0" });
 });
 
+app.get("/info", (req, res) => {
+    res.json({
+        name: "lesson1-agent",
+        version: "1.0.0"
+    });
+});
+
 app.listen(port, () => {
     console.log(`App is running on port ${port}`);
 });
