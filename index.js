@@ -11,6 +11,10 @@ app.get("/health", (req, res) => {
     res.json({ status: "ok" });
 });
 
+app.get("/version", (req, res) => {
+    res.json({ version: "1.0.0" });
+});
+
 app.listen(port, () => {
     console.log(`App is running on port ${port}`);
 });
