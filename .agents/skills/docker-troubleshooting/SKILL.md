@@ -44,3 +44,11 @@ Do not assume the cause from a single symptom.
 - Do not treat `EXPOSE` as proof that a host port is published.
 - Confirm suspected port mismatches from inside the running container when possible.
 - Prefer fixing runtime configuration when the code and image configuration are already correct.
+
+## Scripts
+
+For an initial Docker environment inspection, use:
+
+`scripts/docker-status.ps1`
+
+Use the script to collect basic Docker state before deeper diagnosis when appropriate.
