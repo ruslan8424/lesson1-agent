@@ -22,6 +22,17 @@ app.get("/info", (req, res) => {
     });
 });
 
+
+app.get("/status", (req, res) => {
+    res.json({
+        name: "lesson1-agent",
+        status: "healthy",
+        version: "1.0.0",
+        environment: "production"
+    });
+});
+
+
 app.listen(port, () => {
     console.log(`App is running on port ${port}`);
 });
