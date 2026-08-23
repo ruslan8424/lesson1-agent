@@ -61,6 +61,82 @@ def inspect_container(container: str) -> str:
 
     return result.stdout
 
+@mcp.tool()
+def remote_list_containers() -> str:
+    """List Docker containers on the DigitalOcean server."""
+
+    result = subprocess.run(
+        [
+            "ssh",
+            "root@134.122.124.140",
+            "docker ps -a"
+        ],
+        capture_output=True,
+        text=True
+    )
+
+    if result.returncode != 0:
+        return result.stderr
+
+    return result.stdout
+
+@mcp.tool()
+def remote_container_logs(container: str, tail: int = 100) -> str:
+    """Get recent logs from a Docker container on the DigitalOcean server."""
+
+    result = subprocess.run(
+        [
+            "ssh",
+            "root@134.122.124.140",
+            f"docker logs --tail {tail} {container}"
+        ],
+        capture_output=True,
+        text=True
+    )
+
+    if result.returncode != 0:
+        return result.stderr
+
+    return result.stdout
+
+
+@mcp.tool()
+def remote_inspect_container(container: str) -> str:
+    """Inspect a Docker container on the DigitalOcean server."""
+
+    result = subprocess.run(
+        [
+            "ssh",
+            "root@134.122.124.140",
+            f"docker inspect {container}"
+        ],
+        capture_output=True,
+        text=True
+    )
+
+    if result.returncode != 0:
+        return result.stderr
+
+    return result.stdout
+
+@mcp.tool()
+def remote_start_container(container: str) -> str:
+    """Start a stopped Docker container on the DigitalOcean server."""
+
+    result = subprocess.run(
+        [
+            "ssh",
+            "root@134.122.124.140",
+            f"docker start {container}"
+        ],
+        capture_output=True,
+        text=True
+    )
+
+    if result.returncode != 0:
+        return result.stderr
+
+    return result.stdout
 
 
 if __name__ == "__main__":
