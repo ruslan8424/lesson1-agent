@@ -27,8 +27,8 @@ app.get("/status", (req, res) => {
     res.json({
         name: "lesson1-agent",
         status: "healthy",
-        version: "1.0.0",
-        environment: "production"
+        version: process.env.APP_VERSION || "1.0.0",
+        environment: process.env.NODE_ENV || "development"
     });
 });
 
