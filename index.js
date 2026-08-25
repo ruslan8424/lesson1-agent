@@ -2,6 +2,7 @@ const express = require("express");
 const { Pool } = require("pg");
 
 const app = express();
+app.use(express.json());
 const port = process.env.PORT || 3000;
 
 const pool = new Pool({
@@ -11,6 +12,8 @@ const pool = new Pool({
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD
 });
+
+
 
 app.get("/db-status", async (req, res) => {
     try {
@@ -28,7 +31,7 @@ app.get("/db-status", async (req, res) => {
 });
 
 app.get("/", (req, res) => {
-    res.send("Hello from Lesson 1!");
+    res.send("Hello from Lesson 2!");
 });
 
 app.get("/health", (req, res) => {
@@ -54,6 +57,81 @@ app.get("/status", (req, res) => {
         version: process.env.APP_VERSION || "1.0.0",
         environment: process.env.NODE_ENV || "development"
     });
+});
+
+app.get("/tasks", async (req, res) => {
+    try {
+        const result = await pool.query(
+            "SELECT * FROM tasks ORDER BY id"
+        );
+
+        res.json(result.rows);
+    } catch (error) {
+        res.status(500).json({
+            status: "error",
+            message: error.message
+        });
+    }
+});
+
+
+app.post("/tasks", async (req, res) => {
+    try {
+        const { title } = req.body;
+
+        const result = await pool.query(
+            "INSERT INTO tasks (title) VALUES ($1) RETURNING *",
+            [title]
+        );
+
+        res.status(201).json(result.rows[0]);
+    } catch (error) {
+        res.status(500).json({
+            status: "error",
+            message: error.message
+        });
+    }
+});
+
+app.put("/tasks/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { title, completed } = req.body;
+
+        const result = await pool.query(
+            `UPDATE tasks
+             SET title = $1, completed = $2
+             WHERE id = $3
+             RETURNING *`,
+            [title, completed, id]
+        );
+
+        res.json(result.rows[0]);
+    } catch (error) {
+        res.status(500).json({
+            status: "error",
+            message: error.message
+        });
+    }
+});
+
+
+app.delete("/tasks/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const result = await pool.query(
+            "DELETE FROM tasks WHERE id = $1 RETURNING *",
+            [id]
+        );
+
+        res.json(result.rows[0]);
+    } catch (error) {
+        res.status(500).json({
+            status: "error",
+            message: error.message
+        });
+    }
 });
 
 
