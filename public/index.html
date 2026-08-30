@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 1 Agent - Tasks</title>
+
+    <style>
+        button {
+            margin-left: 10px;
+        }
+
+        li {
+            margin-bottom: 12px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <h1>Task Dashboard</h1>
+
+    <form id="task-form">
+        <input id="task-title" type="text" placeholder="New task" required>
+        <button type="submit">Add Task</button>
+    </form>
+
+    <ul id="task-list"></ul>
+
+
+    <script>
+        const form = document.getElementById("task-form");
+        const input = document.getElementById("task-title");
+        const list = document.getElementById("task-list");
+
+        async function loadTasks() {
+            const response = await fetch("/tasks");
+            const tasks = await response.json();
+
+            list.innerHTML = "";
+
+            for (const task of tasks) {
+                const item = document.createElement("li");
+
+                const text = document.createElement("span");
+                text.textContent = `${task.id}: ${task.title} - ${task.completed ? "Done" : "Pending"}`;
+
+                const toggleButton = document.createElement("button");
+                toggleButton.textContent = task.completed ? "Mark Pending" : "Mark Done";
+
+                toggleButton.addEventListener("click", async () => {
+                    await fetch(`/tasks/${task.id}`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            title: task.title,
+                            completed: !task.completed
+                        })
+                    });
+
+                    await loadTasks();
+                });
+
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete";
+
+                deleteButton.addEventListener("click", async () => {
+                    await fetch(`/tasks/${task.id}`, {
+                        method: "DELETE"
+                    });
+
+                    await loadTasks();
+                });
+
+                item.appendChild(text);
+                item.appendChild(toggleButton);
+                item.appendChild(deleteButton);
+
+                list.appendChild(item);
+            }
+        }
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            await fetch("/tasks", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    title: input.value
+                })
+            });
+
+            input.value = "";
+            await loadTasks();
+        });
+
+        loadTasks();
+    </script>
+</body>
+
+</html>

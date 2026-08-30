@@ -2,6 +2,7 @@ const express = require("express");
 const { Pool } = require("pg");
 
 const app = express();
+app.use(express.static("public"));
 app.use(express.json());
 const port = process.env.PORT || 3000;
 
