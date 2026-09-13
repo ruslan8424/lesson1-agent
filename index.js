@@ -4,7 +4,7 @@ const { Pool } = require("pg");
 const app = express();
 app.use(express.static("public"));
 app.use(express.json());
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
 const pool = new Pool({
     host: process.env.DB_HOST,
@@ -202,6 +202,23 @@ app.delete("/tasks/:id", async (req, res) => {
 });
 
 
-app.listen(port, () => {
-    console.log(`App is running on port ${port}`);
+const server = app.listen(PORT, () => {
+    console.log(`App is running on port ${PORT}`);
+});
+
+process.on("SIGTERM", () => {
+    console.log("SIGTERM received. Shutting down gracefully...");
+
+    server.close(async () => {
+        console.log("HTTP server closed.");
+
+        try {
+            await pool.end();
+            console.log("PostgreSQL pool closed.");
+            process.exit(0);
+        } catch (error) {
+            console.error("Error during shutdown:", error.message);
+            process.exit(1);
+        }
+    });
 });
