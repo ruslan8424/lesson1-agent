@@ -6,6 +6,8 @@ COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
 COPY index.js ./
+COPY migrate.js ./
+COPY migrations ./migrations
 COPY public ./public
 
 ENV NODE_ENV=production
